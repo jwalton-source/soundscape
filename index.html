@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Audio Sample Source Input</title>
+        <style>
+            body {
+                font-family: 'Courier New', Courier, monospace, sans-serif;
+                font-weight: bold;
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+                background-color: rgb(245, 240, 233);
+            }
+            h1 {
+                font-size: 28px;
+                margin-bottom: 10px;
+                text-align: center;
+            }
+            h2 {
+                font-weight: bold;
+                margin-bottom: 25px;
+            }
+            p {
+                color: #060606;
+                font-style: bold;
+                font-size: 18px;
+                margin-bottom: 20px;
+                text-align: left;
+                padding-left: 15px;
+            }
+            .input-group {
+                display: flex;
+                margin-bottom: 20px;
+            }
+            input[type="text"] {
+                flex-grow: 1;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+            .submit-btn, .upload-btn {
+                background-color: #000;
+                font-size: 14px;
+                color: #fff;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 12px;
+                cursor: pointer;
+                margin: 5px;
+            }
+            .upload-section {
+                margin-top: 20px;
+                display: flex;
+                align-items: center;
+            }
+            .slidecontainer {
+                width: 100%;
+                margin-top: 20px;
+            }
+            .slider {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 100%;
+                height: 25px;
+                background: #d3d3d3;
+                outline: none;
+                opacity: 0.7;
+                -webkit-transition: .2s;
+                transition: opacity .2s;
+                border-radius: 12.5px;
+            }
+            .slider:hover {
+                opacity: 1;
+            }
+            .slider::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                border-radius: 50%;
+                width: 25px;
+                height: 25px;
+                background: #000000;
+                cursor: pointer;
+            }
+            .slider::-moz-range-thumb {
+                width: 25px;
+                height: 25px;
+                background: #000000;
+                cursor: pointer;
+                border-radius: 50%;
+            }    
+            .slider-labels {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 10px;
+                margin-bottom: 40px;
+            }
+            .preference-panel {
+                margin-top: 30px;
+            }
+            .radio-toolbar input[type="radio"] {
+                opacity: 0;
+                position: fixed;
+                width: 0;
+            }
+            .radio-toolbar label {
+                display: inline-block;
+                background-color: #000;
+                color: #fff;
+                padding: 10px 20px;
+                font-family: sans-serif, Arial;
+                font-size: 14px;
+                border-radius: 15px;
+                margin: 5px;
+                cursor: pointer;
+                margin-bottom: 30px;;
+            }
+            .radio-toolbar input[type="radio"]:checked + label {
+                background-color: #444;
+            }
+            .radio-toolbar label:hover {
+                background-color: #222;
+            }
+        </style>
+    </head>
+<body>
+    <h1>Soundscape Generator</h1>
+    <div><hr></div>
+    <form id="audioForm" enctype="multipart/form-data">
+        <p>Upload an mp3 file:</p>
+        <input type="file" name="audio_file" accept=".mp3" required>
+        <button type="submit" class="submit-btn">Generate Soundscape</button>
+        
+        <div class="preference-panel">
+            <h2>Select your preferences for Soundscape:</h2>
+            <p>Duration:</p>
+            <div class="radio-toolbar">
+                <input type="radio" id="radio1" name="duration" value="0:30" checked>
+                <label for="radio1">0:30</label>
+                <input type="radio" id="radio2" name="duration" value="1:00">
+                <label for="radio2">1:00</label>
+                <input type="radio" id="radio3" name="duration" value="1:30">
+                <label for="radio3">1:30</label>
+                <input type="radio" id="radio4" name="duration" value="2:00">
+                <label for="radio4">2:00</label>
+            </div>
+        </div>
+        <div>
+            <p>Minimalism Index:</p>
+            <div class="slidecontainer">
+                <input type="range" min="0" max="100" value="50" class="slider" id="minimalismRange" name="minimalism_index">
+                <div class="slider-labels">
+                    <span>0.0</span>
+                    <span>0.5</span>
+                    <span>1.0</span>
+                </div>
+            </div>
+        </div>
+        <div>
+            <p>Color:</p>
+            <div class="slidecontainer">
+                <input type="range" min="0" max="100" value="50" class="slider" id="colorRange" name="color">
+                <div class="slider-labels">
+                    <span>Cold/Dessicated</span>
+                    <span>0.5</span>
+                    <span>Warm/Saturated</span>
+                </div>
+            </div>
+        </div>
+        <p>Atmosphere:</p>
+        <div class="radio-toolbar">
+            <input type="radio" id="radio5" name="atmosphere" value="Misty Moor" checked>
+            <label for="radio5">Misty Moor</label>
+            <input type="radio" id="radio6" name="atmosphere" value="Grandma's House">
+            <label for="radio6">Grandma's House</label>
+            <input type="radio" id="radio7" name="atmosphere" value="School Gym">
+            <label for="radio7">School Gym</label>
+            <input type="radio" id="radio8" name="atmosphere" value="Todai-ji">
+            <label for="radio8">Todai-ji</label>
+        </div>
+    </form>
+    
+    <script>
+        document.getElementById('audioForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            var formData = new FormData(this);
+            
+            fetch('/process_audio', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                var url = window.URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = 'processed_audio.mp3';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
